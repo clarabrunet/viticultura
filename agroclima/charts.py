@@ -10,23 +10,26 @@ from plotly.subplots import make_subplots
 
 from .config import BRAND, MONTHS_ES
 
-TMAX, TMEAN, TMIN = BRAND["wine"], BRAND["gold"], BRAND["sky"]
-RAIN, ET0 = BRAND["sky"], BRAND["gold"]
-BAND_FILLS = ["rgba(79,124,172,.10)", "rgba(102,118,77,.10)", "rgba(201,165,104,.13)", "rgba(104,47,66,.10)"]
+TMAX, TMEAN, TMIN = BRAND["s3"], BRAND["s2"], BRAND["s1"]
+RAIN, ET0 = BRAND["s1_light"], BRAND["s3"]
+BAND_FILLS = ["rgba(59,47,134,.07)", "rgba(31,122,74,.08)", "rgba(179,165,50,.12)", "rgba(33,24,69,.04)"]
+TEMP_SCALE = [[0, "#2A2165"], [0.25, "#8F87C9"], [0.5, "#F4F3F0"], [0.75, "#D9C77A"], [1, "#7A5F0E"]]
+WET_SCALE = [[0, "#7A5F0E"], [0.25, "#D9C77A"], [0.5, "#F4F3F0"], [0.75, "#7FB596"], [1, "#0F4D2B"]]
+TITLE_FONT = "Cormorant Garamond, Georgia, serif"
 
 
 def style(fig, height=420, title=None, unified=True):
     fig.update_layout(
         template="plotly_white", height=height, paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
-        font=dict(family="Inter, system-ui, sans-serif", color=BRAND["ink"], size=13),
-        title=dict(text=title, font=dict(size=16, color=BRAND["wine_dark"]), x=0, xanchor="left") if title else None,
+        font=dict(family="Inter, system-ui, sans-serif", color=BRAND["ink"], size=12.5),
+        title=dict(text=title, font=dict(family=TITLE_FONT, size=21, color=BRAND["indigo"], weight=600), x=0.005, xanchor="left") if title else None,
         margin=dict(l=10, r=10, t=56 if title else 20, b=10),
         legend=dict(orientation="h", yanchor="top", y=-0.08, xanchor="left", x=0, title_text=""),
         hovermode="x unified" if unified else "closest",
         hoverlabel=dict(bgcolor="#FFFFFF", bordercolor=BRAND["line"], font_color=BRAND["ink"]),
     )
     fig.update_xaxes(showgrid=False, linecolor=BRAND["line"], ticks="outside", tickcolor=BRAND["line"])
-    fig.update_yaxes(gridcolor="#EFEAE2", zerolinecolor=BRAND["line"])
+    fig.update_yaxes(gridcolor="#EFEDF2", zerolinecolor=BRAND["line"])
     return fig
 
 
@@ -45,17 +48,17 @@ def climograph(norm: pd.DataFrame) -> go.Figure:
                              mode="lines+markers", marker=dict(size=8)), 1, 1)
     fig.add_trace(go.Scatter(x=x, y=norm["T mín media (°C)"], name="T mín", line=dict(color=TMIN, width=2),
                              mode="lines+markers", marker=dict(size=8), fill="tonexty",
-                             fillcolor="rgba(201,165,104,.10)"), 1, 1)
-    fig.add_trace(go.Scatter(x=x, y=norm["T media (°C)"], name="T media", line=dict(color=TMEAN, width=2, dash="dot"),
+                             fillcolor="rgba(179,165,50,.08)"), 1, 1)
+    fig.add_trace(go.Scatter(x=x, y=norm["T media (°C)"], name="T media", line=dict(color=BRAND["muted"], width=1.5, dash="dot"),
                              mode="lines"), 1, 1)
     fig.add_trace(go.Bar(x=x, y=norm["Precipitación (mm)"], name="Precipitación", marker_color=RAIN,
                          marker_line_width=0), 2, 1)
-    fig.add_trace(go.Scatter(x=x, y=norm["ET0 (mm)"], name="ET0", line=dict(color=ET0, width=2),
+    fig.add_trace(go.Scatter(x=x, y=norm["ET0 (mm)"], name="ET0", line=dict(color=BRAND["s2"], width=2),
                              mode="lines+markers", marker=dict(size=8)), 2, 1)
     fig.update_traces(hovertemplate="%{y:.1f}")
     fig.update_layout(bargap=0.35)
     for a in fig.layout.annotations:
-        a.update(x=0, xanchor="left", font=dict(size=13, color=BRAND["muted"]))
+        a.update(x=0, xanchor="left", font=dict(size=12, color=BRAND["muted"]))
     return style(fig, height=560, title="Climograma: normales mensuales del periodo")
 
 
@@ -77,7 +80,7 @@ def index_series(annual: pd.DataFrame, col: str, classes=None, unit="", trend_ro
             prev = top
         fig.update_yaxes(range=[ymin, ymax])
     fig.add_trace(go.Scatter(x=d["Campaña"], y=d[col], mode="lines+markers", name=col,
-                             line=dict(color=BRAND["wine"], width=2), marker=dict(size=8, line=dict(color="#fff", width=2)),
+                             line=dict(color=BRAND["s1"], width=2), marker=dict(size=8, line=dict(color="#fff", width=2)),
                              hovertemplate=f"%{{x}}: %{{y:,.1f}} {unit}<extra></extra>"))
     if not d.empty:
         fig.add_hline(y=d[col].mean(), line=dict(color=BRAND["muted"], width=1, dash="dash"),
@@ -89,7 +92,7 @@ def index_series(annual: pd.DataFrame, col: str, classes=None, unit="", trend_ro
         sen = stats.theilslopes(d[col], d["Campaña"])
         xs = np.array([d["Campaña"].min(), d["Campaña"].max()])
         fig.add_trace(go.Scatter(x=xs, y=sen.intercept + sen.slope * xs, mode="lines", name="Tendencia (Sen)",
-                                 line=dict(color=BRAND["olive"], width=2), hoverinfo="skip"))
+                                 line=dict(color=BRAND["s2"], width=2), hoverinfo="skip"))
     fig.update_xaxes(dtick=5 if len(d) > 25 else 2 if len(d) > 12 else 1, tickangle=0, title=None)
     return style(fig, height=420, title=col, unified=False)
 
@@ -104,15 +107,15 @@ def cumulative_chart(cum: pd.DataFrame, highlight: int, base_temp: float) -> go.
         if yr == highlight:
             continue
         fig.add_trace(go.Scatter(x=part["Fecha ref"], y=part["GDD acumulado"], mode="lines", showlegend=False,
-                                 line=dict(color="rgba(110,106,99,.18)", width=1), hoverinfo="skip"))
+                                 line=dict(color="rgba(107,104,120,.16)", width=1), hoverinfo="skip"))
     fig.add_trace(go.Scatter(x=band["ref"], y=band["p90"], line=dict(width=0), showlegend=False, hoverinfo="skip"))
-    fig.add_trace(go.Scatter(x=band["ref"], y=band["p10"], fill="tonexty", fillcolor="rgba(201,165,104,.25)",
+    fig.add_trace(go.Scatter(x=band["ref"], y=band["p10"], fill="tonexty", fillcolor="rgba(179,165,50,.22)",
                              line=dict(width=0), name="Rango P10–P90", hoverinfo="skip"))
-    fig.add_trace(go.Scatter(x=band["ref"], y=band["p50"], name="Mediana", line=dict(color=BRAND["gold"], width=2),
+    fig.add_trace(go.Scatter(x=band["ref"], y=band["p50"], name="Mediana", line=dict(color=BRAND["olive"], width=2),
                              hovertemplate="Mediana: %{y:,.0f}<extra></extra>"))
     h = cum[cum["Campaña"] == highlight]
     fig.add_trace(go.Scatter(x=h["Fecha ref"], y=h["GDD acumulado"], name=f"Campaña {highlight}",
-                             line=dict(color=BRAND["wine"], width=3),
+                             line=dict(color=BRAND["s1"], width=3),
                              hovertemplate=f"{highlight}: %{{y:,.0f}}<extra></extra>"))
     spanish_month_axis(fig, cum["Fecha ref"].min(), cum["Fecha ref"].max())
     fig.update_yaxes(title=f"GDD acumulado (base {base_temp:g} °C)")
@@ -143,7 +146,7 @@ def monthly_box(monthly: pd.DataFrame, col: str, color: str) -> go.Figure:
 def water_bars(annual: pd.DataFrame) -> go.Figure:
     d = annual[["Campaña", "Balance P − ET0 temporada (mm)"]].dropna()
     col = "Balance P − ET0 temporada (mm)"
-    colors = [BRAND["sky"] if v >= 0 else BRAND["wine"] for v in d[col]]
+    colors = [BRAND["s2"] if v >= 0 else BRAND["s3"] for v in d[col]]
     fig = go.Figure(go.Bar(x=d["Campaña"], y=d[col], marker_color=colors, marker_line_width=0,
                            hovertemplate="%{x}: %{y:,.0f} mm<extra></extra>", showlegend=False))
     fig.add_hline(y=0, line=dict(color=BRAND["muted"], width=1))
@@ -171,7 +174,7 @@ def frost_dots(annual: pd.DataFrame) -> go.Figure:
 
 def small_bars(df: pd.DataFrame, col: str, unit: str) -> go.Figure:
     d = df[["Campaña", col]].dropna()
-    fig = go.Figure(go.Bar(x=d["Campaña"], y=d[col], marker_color=BRAND["wine"], marker_line_width=0,
+    fig = go.Figure(go.Bar(x=d["Campaña"], y=d[col], marker_color=BRAND["s1"], marker_line_width=0,
                            hovertemplate=f"%{{x}}: %{{y:,.0f}} {unit}<extra></extra>", showlegend=False))
     fig.update_yaxes(rangemode="tozero", tickformat=",.0f", **({"dtick": 1} if d[col].max() <= 5 else {}))
     fig.update_xaxes(dtick=5 if len(d) > 25 else 2, tickangle=0)
@@ -180,7 +183,7 @@ def small_bars(df: pd.DataFrame, col: str, unit: str) -> go.Figure:
 
 def compare_sites(table: pd.DataFrame, col: str) -> go.Figure:
     d = table.sort_values(col)
-    fig = go.Figure(go.Bar(x=d[col], y=d["Finca"], orientation="h", marker_color=BRAND["wine"],
+    fig = go.Figure(go.Bar(x=d[col], y=d["Finca"], orientation="h", marker_color=BRAND["s1"],
                            marker_line_width=0, text=d[col].map(lambda v: f"{v:,.1f}" if abs(v) < 100 else f"{v:,.0f}"),
                            textposition="outside", hovertemplate="%{y}: %{x:,.1f}<extra></extra>", showlegend=False))
     return style(fig, height=110 + 42 * len(d), title=col, unified=False)

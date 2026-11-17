@@ -54,5 +54,6 @@ tests/                 pruebas de índices y prueba de humo de la app
 - La orientación varietal por GST es una agrupación amplia y orientativa.
 
 ## Identidad visual
-Tema en `.streamlit/config.toml`; paleta de la marca en `BRAND` (`agroclima/config.py`). Los tonos son
-provisionales hasta disponer del logotipo oficial.
+Colores tomados del logotipo y del material gráfico de la empresa (índigo #211845, verde #145F36, oliva)
+en `BRAND` (`agroclima/config.py`); estilos en `agroclima/theme.py`; logotipo vectorial en `assets/logo.svg`.
+Para usar una foto de la finca como fondo de cabecera, guárdala como `assets/hero.jpg`.

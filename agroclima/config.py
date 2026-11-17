@@ -20,18 +20,25 @@ LABELS = {
     "GDD": "GDD diario (°C·día)",
 }
 
-# Paleta PROVISIONAL de Viticultura del Norte (sustituir por la oficial cuando exista el logotipo).
+# Identidad de Viticultura del Norte, tomada del logotipo (racimo índigo con hoja verde) y de su
+# material gráfico (oliva/chartreuse, tipografía serif de capitales).
 BRAND = {
-    "wine": "#682F42",
-    "wine_dark": "#432331",
-    "olive": "#66764D",
-    "olive_light": "#A3B07F",
-    "cream": "#F7F4EC",
-    "gold": "#C9A568",
-    "sky": "#4F7CAC",
-    "ink": "#27322B",
-    "muted": "#6E6A63",
-    "line": "#E8E0D6",
+    "indigo": "#211845",       # uva del logotipo: color principal
+    "indigo_deep": "#150F2E",
+    "indigo_soft": "#EEEBF5",
+    "green": "#145F36",        # hoja del logotipo
+    "olive": "#8F8A25",        # acento del material gráfico (texto/acento sobre claro)
+    "olive_light": "#C9C27A",
+    "ivory": "#FAF9F6",        # fondo
+    "paper": "#FFFFFF",
+    "ink": "#1D1A2B",
+    "muted": "#6B6878",
+    "line": "#E6E2EA",
+    # Serie categórica para gráficas (validada para daltonismo, ΔE ≥ 16 entre pares)
+    "s1": "#3B2F86",           # índigo
+    "s2": "#1F7A4A",           # verde
+    "s3": "#B3A532",           # oliva
+    "s1_light": "#7A70C2",
 }
 
 MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]

@@ -24,7 +24,7 @@ METHODS = [
 
 
 def _format(writer):
-    head_fill = PatternFill("solid", fgColor=BRAND["wine"].lstrip("#"))
+    head_fill = PatternFill("solid", fgColor=BRAND["indigo"].lstrip("#"))
     for sheet in writer.book.worksheets:
         sheet.freeze_panes = "A2"
         if sheet.max_row > 1:

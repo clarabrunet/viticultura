@@ -14,5 +14,5 @@ def test_app_runs(lat, lon):
     assert not at.exception, at.exception
     assert any("Resultados" in m.value for m in at.markdown)
     # Guardar para comparar
-    [b for b in at.button if b.label.startswith("➕")][0].click().run()
+    [b for b in at.button if b.label.startswith("Guardar")][0].click().run()
     assert not at.exception, at.exception

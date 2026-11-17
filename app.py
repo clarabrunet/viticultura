@@ -18,60 +18,11 @@ from agroclima.config import (
 )
 from agroclima.export import excel_report
 from agroclima import indices as ix
+from agroclima import theme
 
-st.set_page_config(page_title="Agroclima | Viticultura del Norte", page_icon="🍇", layout="wide",
+st.set_page_config(page_title="Agroclima · Viticultura del Norte", page_icon=theme.FAVICON, layout="wide",
                    initial_sidebar_state="expanded")
-
-# ------------------------------------------------------------------ estilo
-st.markdown(f"""
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap');
-  html, body, [class*="css"], .stApp {{ font-family: 'Inter', system-ui, sans-serif; }}
-  .stApp {{ background: {BRAND['cream']}; color: {BRAND['ink']}; }}
-  .block-container {{ max-width: 1320px; padding-top: 1.6rem; padding-bottom: 4rem; }}
-  h1, h2, h3 {{ color: {BRAND['wine_dark']} !important; letter-spacing: -.02em; }}
-  h2, h3 {{ font-family: 'Fraunces', Georgia, serif; font-weight: 600; }}
-  [data-testid="stSidebar"] {{ background: #FFFFFF; border-right: 1px solid {BRAND['line']}; }}
-  .hero {{ background: linear-gradient(115deg, {BRAND['wine_dark']} 0%, {BRAND['wine']} 70%, #7A5546 100%);
-          border-radius: 20px; padding: 26px 32px; color: #fff; margin-bottom: 18px; position: relative; overflow: hidden; }}
-  .hero:after {{ content: ""; position: absolute; right: -60px; top: -60px; width: 260px; height: 260px;
-          border-radius: 50%; background: radial-gradient(circle, rgba(201,165,104,.35), transparent 70%); }}
-  .hero .eyebrow {{ color: #E8D2AE; text-transform: uppercase; letter-spacing: .16em; font-size: .72rem; font-weight: 700; }}
-  .hero h1 {{ color: #fff !important; font-family: 'Fraunces', Georgia, serif; font-size: 2.1rem; margin: .3rem 0 .4rem; padding: 0; }}
-  .hero p {{ color: #F1E7E0; margin: 0; max-width: 760px; }}
-  .step {{ display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }}
-  .step b {{ background: {BRAND['wine']}; color: #fff; border-radius: 50%; width: 26px; height: 26px;
-          display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; }}
-  .step span {{ font-family: 'Fraunces', Georgia, serif; font-size: 1.25rem; color: {BRAND['wine_dark']}; font-weight: 600; }}
-  .card {{ background: #fff; border: 1px solid {BRAND['line']}; border-radius: 16px; padding: 16px 18px;
-          box-shadow: 0 2px 12px rgba(67,35,49,.04); }}
-  .kpis {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 6px 0 18px; }}
-  .kpi {{ background: #fff; border: 1px solid {BRAND['line']}; border-radius: 16px; padding: 14px 16px 12px;
-          box-shadow: 0 2px 12px rgba(67,35,49,.04); }}
-  .kpi .l {{ color: {BRAND['olive']}; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }}
-  .kpi .v {{ font-size: 1.65rem; font-weight: 700; color: {BRAND['wine_dark']}; margin-top: 2px; line-height: 1.2; }}
-  .kpi .v small {{ font-size: .8rem; font-weight: 500; color: {BRAND['muted']}; }}
-  .kpi .b {{ display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 999px; font-size: .75rem;
-          font-weight: 600; background: #F3ECE3; color: {BRAND['wine_dark']}; }}
-  .kpi .s {{ color: {BRAND['muted']}; font-size: .75rem; margin-top: 6px; }}
-  .site-meta {{ display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }}
-  .chip {{ background: #fff; border: 1px solid {BRAND['line']}; border-radius: 999px; padding: 3px 12px;
-          font-size: .82rem; color: {BRAND['ink']}; }}
-  .reading {{ background: #fff; border-left: 4px solid {BRAND['gold']}; border-radius: 0 14px 14px 0;
-          padding: 14px 18px; margin: 4px 0 16px; line-height: 1.55; }}
-  [data-testid="stMetric"] {{ background: #fff; border: 1px solid {BRAND['line']}; border-radius: 14px; padding: 12px 16px; }}
-  [data-testid="stMetricLabel"] {{ color: {BRAND['olive']}; }}
-  .stTabs [data-baseweb="tab-list"] {{ gap: 4px; flex-wrap: wrap; }}
-  .stTabs [data-baseweb="tab"] {{ background: #fff; border: 1px solid {BRAND['line']}; border-radius: 10px 10px 0 0;
-          padding: 6px 14px; }}
-  .stTabs [aria-selected="true"] {{ background: {BRAND['wine']} !important; color: #fff !important; }}
-  .stTabs [aria-selected="true"] p {{ color: #fff !important; }}
-  div.stButton > button[kind="primary"] {{ background: {BRAND['wine']}; border-color: {BRAND['wine']}; border-radius: 10px; font-weight: 650; }}
-  div.stButton > button[kind="primary"]:hover {{ background: {BRAND['wine_dark']}; border-color: {BRAND['wine_dark']}; }}
-  iframe[title="streamlit_folium.st_folium"] {{ border-radius: 16px; border: 1px solid {BRAND['line']}; }}
-  @media (max-width: 650px) {{ .hero {{ padding: 20px; }} .hero h1 {{ font-size: 1.6rem; }} }}
-</style>
-""", unsafe_allow_html=True)
+st.markdown(theme.CSS, unsafe_allow_html=True)
 
 
 # ------------------------------------------------------------- utilidades
@@ -89,7 +40,7 @@ def kpi(label, value, badge=None, sub=None):
 
 
 def step(n, text):
-    st.markdown(f'<div class="step"><b>{n}</b><span>{text}</span></div>', unsafe_allow_html=True)
+    st.markdown(theme.section(f"{n:02d}", text), unsafe_allow_html=True)
 
 
 DMS = re.compile(r"""(\d+(?:[.,]\d+)?)\s*[°º]\s*(?:(\d+(?:[.,]\d+)?)\s*['’′]\s*)?(?:(\d+(?:[.,]\d+)?)\s*(?:"|''|”|″)\s*)?([NSEOW])""", re.I)
@@ -146,7 +97,8 @@ def apply_paste():
 # ----------------------------------------------------------------- sidebar
 this_year = date.today().year
 with st.sidebar:
-    st.markdown("### ⚙️ Parámetros de análisis")
+    st.markdown(theme.side_brand_html(), unsafe_allow_html=True)
+    st.markdown("### Parámetros de análisis")
     years = st.slider("Periodo (campañas)", FIRST_YEAR, this_year, (1991, this_year),
                       help="La campaña se nombra por el año de vendimia. Incluye el año en curso para seguir la campaña actual frente a la climatología.")
     st.caption("Normal climatológica OMM: 1991–2020.")
@@ -160,7 +112,7 @@ with st.sidebar:
                                  format_func=lambda m: MONTHS_ES[m - 1], key=f"harvest_{hem}")
         cov = st.slider("Cobertura mínima de datos", 0.80, 1.0, 0.95, 0.01, format="%.2f")
     if st.session_state.sites:
-        st.markdown("### 📍 Fincas guardadas")
+        st.markdown("### Fincas guardadas")
         for nm, site in list(st.session_state.sites.items()):
             c1, c2 = st.columns([4, 1])
             c1.markdown(f"**{html.escape(nm)}**  \n<small>{site['lat']:.4f}, {site['lon']:.4f}</small>", unsafe_allow_html=True)
@@ -171,14 +123,7 @@ with st.sidebar:
     st.caption("Datos: NASA POWER (MERRA-2, CERES). Reanálisis en rejilla: no sustituye a una estación local.")
 
 # -------------------------------------------------------------------- hero
-st.markdown("""
-<div class="hero">
-  <div class="eyebrow">Viticultura del Norte · Inteligencia agroclimática</div>
-  <h1>Analizador agroclimático vitícola</h1>
-  <p>Índices bioclimáticos (Winkler, Huglin, GST, frescor nocturno, sequía), riesgos de helada y calor,
-  balance hídrico y tendencias a partir de datos diarios de NASA POWER desde 1981.</p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(theme.hero_html(), unsafe_allow_html=True)
 
 # ---------------------------------------------------------- 1. ubicación
 step(1, "Ubica la finca")
@@ -189,24 +134,26 @@ with map_col:
     fmap = folium.Map(location=[lat0, lon0], zoom_start=14, tiles=None, control_scale=True,
                       attribution_control=True, prefer_canvas=True)
     folium.TileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                     attr="Esri, Maxar", name="🛰️ Satélite", max_zoom=19, show=True).add_to(fmap)
+                     attr="Esri, Maxar", name="Satélite", max_zoom=19, show=True).add_to(fmap)
     folium.TileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", attr="OpenTopoMap, OSM",
-                     name="⛰️ Topográfico", max_zoom=17, show=False).add_to(fmap)
+                     name="Topográfico", max_zoom=17, show=False).add_to(fmap)
     folium.TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr="© OpenStreetMap",
-                     name="🗺️ Callejero", max_zoom=19, show=False).add_to(fmap)
+                     name="Callejero", max_zoom=19, show=False).add_to(fmap)
     folium.TileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
                      attr="Esri", name="Etiquetas", overlay=True, control=True, show=True).add_to(fmap)
     fmap.get_root().html.add_child(folium.Element(
         "<style>.leaflet-control-attribution{font-size:9px!important;max-width:60%;white-space:nowrap;"
         "overflow:hidden;text-overflow:ellipsis}</style>"))
     sw, ne = merra2_cell(lat0, lon0)
-    folium.Rectangle([sw, ne], color=BRAND["gold"], weight=2, fill=True, fill_opacity=0.06, dash_array="6 6",
+    folium.Rectangle([sw, ne], color=BRAND["olive_light"], weight=2, fill=True, fill_opacity=0.05, dash_array="6 6",
                      tooltip="Celda de reanálisis MERRA-2 (~0,5° × 0,625°) que representa los datos").add_to(fmap)
     for nm, site in st.session_state.sites.items():
         folium.CircleMarker([site["lat"], site["lon"]], radius=6, color="#fff", weight=2, fill=True,
-                            fill_color=BRAND["sky"], fill_opacity=1, tooltip=nm).add_to(fmap)
+                            fill_color=BRAND["s3"], fill_opacity=1, tooltip=nm).add_to(fmap)
+    pin = (f'<div style="width:38px;height:38px;border-radius:50%;background:#fff;padding:3px;'
+           f'box-shadow:0 0 0 3px {BRAND["indigo"]},0 6px 14px rgba(0,0,0,.45)">{theme.LOGO_SVG}</div>')
     folium.Marker([lat0, lon0], tooltip=st.session_state.name,
-                  icon=folium.Icon(color="darkred", icon="leaf", prefix="fa")).add_to(fmap)
+                  icon=folium.DivIcon(html=pin, icon_size=(38, 38), icon_anchor=(19, 19))).add_to(fmap)
     folium.LayerControl(collapsed=True).add_to(fmap)
     out = st_folium(fmap, key="map", height=470, use_container_width=True, returned_objects=["last_clicked"])
     click = (out or {}).get("last_clicked")
@@ -229,10 +176,10 @@ with form_col:
     hem = "N" if st.session_state.lat >= 0 else "S"
     se = SEASONS[hem]
     st.markdown(
-        f'<div class="site-meta"><span class="chip">🌐 {se.label}</span>'
-        f'<span class="chip">🌱 Temporada {MONTHS_ES[se.winkler[0]-1]}–{MONTHS_ES[se.winkler[-1]-1]}</span>'
-        f'<span class="chip">📅 {years[0]}–{years[1]}</span></div>', unsafe_allow_html=True)
-    run = st.button("Analizar finca", type="primary", width="stretch", icon="🍇")
+        f'<div class="site-meta"><span class="chip"><b>Hemisferio</b>{se.label.split()[-1]}</span>'
+        f'<span class="chip"><b>Temporada</b>{MONTHS_ES[se.winkler[0]-1]}–{MONTHS_ES[se.winkler[-1]-1]}</span>'
+        f'<span class="chip"><b>Periodo</b>{years[0]}–{years[1]}</span></div>', unsafe_allow_html=True)
+    run = st.button("Analizar finca", type="primary", width="stretch", icon=":material/query_stats:")
     st.caption("La primera consulta de un periodo largo puede tardar 10–30 s; después queda en caché 24 h.")
 
 if run:
@@ -257,7 +204,8 @@ if run:
 
 res = st.session_state.result
 if res is None:
-    st.info("Sitúa la finca en el mapa (o introduce coordenadas) y pulsa **Analizar finca**.")
+    st.info("Sitúa la finca en el mapa (o introduce coordenadas) y pulsa **Analizar finca**.", icon=":material/info:")
+    st.markdown(theme.footer_html(), unsafe_allow_html=True)
     st.stop()
 
 # --------------------------------------------------------------- cálculos
@@ -283,12 +231,12 @@ def badge_of(col, classes):
 st.divider()
 step(2, f"Resultados · {html.escape(res['name'])}")
 if (res["lat"], res["lon"]) != (st.session_state.lat, st.session_state.lon):
-    st.caption("ℹ️ Las coordenadas del formulario han cambiado; pulsa **Analizar finca** para actualizar los resultados.")
+    st.caption("Las coordenadas del formulario han cambiado; pulsa **Analizar finca** para actualizar los resultados.")
 st.markdown(
-    f'<div class="site-meta"><span class="chip">📍 {lat:.5f}, {lon:.5f}</span>'
-    f'<span class="chip">⛰️ Altitud celda {fmt(meta["elevation"], 0, "m")}</span>'
-    f'<span class="chip">📅 {len(valid)} campañas válidas ({int(valid["Campaña"].min())}–{int(valid["Campaña"].max())})</span>'
-    f'<span class="chip">🌡️ Base {fmt(base, 1)} °C · helada ≤ {fmt(frost, 1)} °C · calor ≥ {fmt(heat, 1)} °C</span></div>',
+    f'<div class="site-meta"><span class="chip"><b>Coordenadas</b>{lat:.5f}, {lon:.5f}</span>'
+    f'<span class="chip"><b>Altitud celda</b>{fmt(meta["elevation"], 0, "m")}</span>'
+    f'<span class="chip"><b>Campañas válidas</b>{len(valid)} ({int(valid["Campaña"].min())}–{int(valid["Campaña"].max())})</span>'
+    f'<span class="chip"><b>Umbrales</b>base {fmt(base, 1)} °C · helada ≤ {fmt(frost, 1)} °C · calor ≥ {fmt(heat, 1)} °C</span></div>',
     unsafe_allow_html=True)
 
 gst_cls = badge_of("GST (°C)", GST_CLASSES)
@@ -312,8 +260,8 @@ cards = [
 ]
 st.markdown(f'<div class="kpis">{"".join(cards)}</div>', unsafe_allow_html=True)
 
-tabs = st.tabs(["📋 Resumen", "🌡️ Índices", "📈 Campaña en curso", "🗓️ Clima mensual", "💧 Agua",
-                "❄️ Riesgos", "📉 Tendencias", "⚖️ Comparar fincas", "📥 Datos", "📚 Metodología"])
+tabs = st.tabs(["Resumen", "Índices", "Campaña en curso", "Clima mensual", "Agua",
+                "Riesgos", "Tendencias", "Comparar fincas", "Datos", "Metodología"])
 
 # ------------------------------------------------------------------ resumen
 with tabs[0]:
@@ -353,7 +301,9 @@ with tabs[0]:
             parts.append(pd.DataFrame({"Índice": label, "Clase": order, "Campañas": vc[order].to_numpy(),
                                        "%": 100 * vc[order].to_numpy() / vc.sum()}))
         st.dataframe(pd.concat(parts), width="stretch", hide_index=True, column_config={
-            "%": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f %%")})
+            "Índice": st.column_config.TextColumn(width="small"),
+            "Campañas": st.column_config.NumberColumn(width="small"),
+            "%": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f %%", width="medium")})
         st.markdown("#### Fechas de helada")
         st.dataframe(pd.Series(frost_s, name="Fecha"), width="stretch")
 
@@ -405,10 +355,10 @@ with tabs[2]:
 
 # ----------------------------------------------------------- clima mensual
 VAR_OPTS = {
-    "T media (°C)": ("°C", "RdBu_r", False), "T máx media (°C)": ("°C", "RdBu_r", False),
-    "T mín media (°C)": ("°C", "RdBu_r", False), "Precipitación (mm)": ("%", "BrBG", True),
-    "ET0 (mm)": ("%", "BrBG_r", True), "GDD (°C·día)": ("°C·día", "RdBu_r", False),
-    "Radiación media (MJ/m²/día)": ("MJ/m²", "RdBu_r", False), "HR media (%)": ("pp", "BrBG", False),
+    "T media (°C)": ("°C", charts.TEMP_SCALE, False), "T máx media (°C)": ("°C", charts.TEMP_SCALE, False),
+    "T mín media (°C)": ("°C", charts.TEMP_SCALE, False), "Precipitación (mm)": ("%", charts.WET_SCALE, True),
+    "ET0 (mm)": ("%", charts.TEMP_SCALE, True), "GDD (°C·día)": ("°C·día", charts.TEMP_SCALE, False),
+    "Radiación media (MJ/m²/día)": ("MJ/m²", charts.TEMP_SCALE, False), "HR media (%)": ("pp", charts.WET_SCALE, False),
 }
 with tabs[3]:
     var = st.selectbox("Variable", list(VAR_OPTS))
@@ -418,7 +368,7 @@ with tabs[3]:
     with c1:
         st.plotly_chart(charts.anomaly_heatmap(mat, f"Anomalías mensuales · {var}", u, scale), width="stretch")
     with c2:
-        color = BRAND["sky"] if "Precip" in var else BRAND["wine"]
+        color = BRAND["s1_light"] if "Precip" in var else BRAND["s1"]
         st.plotly_chart(charts.monthly_box(monthly.loc[str(res["years"][0]):str(res["years"][1])], var, color),
                         width="stretch")
         st.markdown("#### Normales mensuales")
@@ -489,7 +439,7 @@ with tabs[6]:
 
 # ---------------------------------------------------------------- comparar
 with tabs[7]:
-    if st.button(f"➕ Guardar «{res['name']}» para comparar", type="primary"):
+    if st.button(f"Guardar «{res['name']}» para comparar", type="primary", icon=":material/add:"):
         st.session_state.sites[res["name"]] = {"lat": lat, "lon": lon, "elevation": meta["elevation"],
                                                "annual": annual.copy(), "years": res["years"]}
         st.rerun()
@@ -527,12 +477,12 @@ with tabs[8]:
                      ("Cobertura mínima", cov), ("Hemisferio", SEASONS[hem].label)]
     slug = re.sub(r"[^a-z0-9]+", "_", res["name"].lower()).strip("_") or "finca"
     c1, c2, c3 = st.columns(3)
-    c1.download_button("📊 Excel completo", excel_report(site, settings_rows, annual, trend, monthly, norms, daily),
+    c1.download_button("Excel completo", icon=":material/table_view:", data=excel_report(site, settings_rows, annual, trend, monthly, norms, daily),
                        file_name=f"agroclima_{slug}_{res['years'][0]}_{res['years'][1]}.xlsx", type="primary",
                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", width="stretch")
-    c2.download_button("📄 Índices por campaña (CSV)", annual.to_csv(index=False).encode("utf-8-sig"),
+    c2.download_button("Índices por campaña (CSV)", icon=":material/download:", data=annual.to_csv(index=False).encode("utf-8-sig"),
                        file_name=f"indices_{slug}.csv", mime="text/csv", width="stretch")
-    c3.download_button("📄 Datos diarios (CSV)", daily.to_csv().encode("utf-8-sig"),
+    c3.download_button("Datos diarios (CSV)", icon=":material/download:", data=daily.to_csv().encode("utf-8-sig"),
                        file_name=f"diario_{slug}.csv", mime="text/csv", width="stretch")
     view = st.radio("Tabla", ["Índices por campaña", "Serie mensual", "Datos diarios"], horizontal=True)
     if view == "Índices por campaña":
@@ -586,3 +536,5 @@ Pendiente MCO y estimador de Theil-Sen expresados por década; significación me
 
 > Los datos de reanálisis no sustituyen a una estación meteorológica local. Antes de decisiones de inversión, contrastar con registros in situ.
 """)
+
+st.markdown(theme.footer_html(), unsafe_allow_html=True)
